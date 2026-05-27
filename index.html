@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algo Visualizer</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+
+  <body>
+    <div class="bg-grid"></div>
+    <canvas id="particles-canvas"></canvas>
+
+    <header>
+      <div class="header-inner">
+        <div class="logo">
+          <span class="logo-bracket">[</span>
+          <div class="logo-center">
+            <span class="logo-text">DSA</span>
+            <span class="logo-sub">VISUALIZER</span>
+          </div>
+          <span class="logo-bracket">]</span>
+        </div>
+        <div class="header-stats">
+          <div class="stat-pill"><span class="pill-icon">⚖️</span>Comparisons <span id="hdr-comps">0</span></div>
+          <div class="stat-pill"><span class="pill-icon">🔄</span>Swaps <span id="hdr-swaps">0</span></div>
+          <div class="stat-pill"><span class="pill-icon">⚡</span>Operations <span id="hdr-ops">0</span></div>
+        </div>
+      </div>
+    </header>
+
+    <nav class="topic-nav">
+      <button class="topic-btn active" data-topic="sort" onclick="switchTopic('sort')">
+        <span class="t-icon">⚡</span> Sorting
+      </button>
+      <button class="topic-btn" data-topic="search" onclick="switchTopic('search')">
+        <span class="t-icon">🔍</span> Searching
+      </button>
+      <button class="topic-btn" data-topic="linked" onclick="switchTopic('linked')">
+        <span class="t-icon">🔗</span> Linked List
+      </button>
+      <button class="topic-btn" data-topic="sq" onclick="switchTopic('sq')">
+        <span class="t-icon">📦</span> Stack & Queue
+      </button>
+    </nav>
+
+    <!-- ═══ SORTING ═══ -->
+    <div class="topic-panel active" id="panel-sort">
+      <div class="controls-card">
+        <div class="controls-row">
+          <div class="slider-group">
+            <label>Array Size <span class="slider-val" id="size-val">40</span></label>
+            <input type="range" id="size-slider" min="5" max="80" value="40"
+              oninput="document.getElementById('size-val').textContent=this.value">
+          </div>
+          <div class="slider-group">
+            <label>Speed <span class="slider-val" id="speed-val">50</span>ms</label>
+            <input type="range" id="speed-slider" min="5" max="200" value="50"
+              oninput="document.getElementById('speed-val').textContent=this.value">
+          </div>
+          <div class="slider-group">
+            <label>Show Values <span class="slider-val" id="show-vals-label">ON</span></label>
+            <input type="range" id="show-vals-toggle" min="0" max="1" value="1" step="1"
+              oninput="toggleBarValues(this.value)">
+          </div>
+          <button class="action-btn generate" onclick="generateArray()">⟳ Generate Array</button>
+        </div>
+        <div class="algo-btns">
+          <button class="algo-btn bubble"    onclick="startSort('bubble')">Bubble Sort</button>
+          <button class="algo-btn selection" onclick="startSort('selection')">Selection Sort</button>
+          <button class="algo-btn insertion" onclick="startSort('insertion')">Insertion Sort</button>
+          <button class="algo-btn merge"     onclick="startSort('merge')">Merge Sort</button>
+          <button class="algo-btn quick"     onclick="startSort('quick')">Quick Sort</button>
+          <button class="algo-btn stop" id="stop-sort-btn" onclick="stopSort()" disabled>⏹ Stop</button>
+        </div>
+      </div>
+      <div class="info-bar">
+        <div class="info-algo" id="sort-algo-name">— Select an algorithm —</div>
+        <div class="info-chips">
+          <div class="chip best">Best <span id="sort-best">—</span></div>
+          <div class="chip">Avg <span id="sort-avg">—</span></div>
+          <div class="chip worst">Worst <span id="sort-worst">—</span></div>
+          <div class="chip">Space <span id="sort-space">—</span></div>
+        </div>
+      </div>
+      <div class="viz-area">
+        <div class="bar-container" id="sort-bars"></div>
+        <div class="legend">
+          <div class="leg"><div class="dot" style="background:var(--accent)"></div>Unsorted</div>
+          <div class="leg"><div class="dot" style="background:var(--pink)"></div>Comparing</div>
+          <div class="leg"><div class="dot" style="background:var(--yellow)"></div>Swapping</div>
+          <div class="leg"><div class="dot" style="background:var(--green)"></div>Sorted</div>
+        </div>
+      </div>
+      <div class="status-bar" id="sort-status">Generate an array and pick a sorting algorithm.</div>
+    </div>
+
+    <!-- ═══ SEARCHING ═══ -->
+    <div class="topic-panel" id="panel-search">
+      <div class="controls-card">
+        <div class="controls-row">
+          <div class="slider-group">
+            <label>Array Size <span class="slider-val" id="srch-size-val">20</span></label>
+            <input type="range" id="srch-size-slider" min="8" max="40" value="20"
+              oninput="document.getElementById('srch-size-val').textContent=this.value">
+          </div>
+          <div class="slider-group">
+            <label>Speed <span class="slider-val" id="srch-speed-val">80</span>ms</label>
+            <input type="range" id="srch-speed-slider" min="50" max="800" value="80"
+              oninput="document.getElementById('srch-speed-val').textContent=this.value">
+          </div>
+          <div class="input-group">
+            <label>Target Value</label>
+            <input type="number" id="srch-target" value="42" min="1" max="99">
+          </div>
+          <button class="action-btn generate" onclick="generateSearchArray()">⟳ Generate Array</button>
+        </div>
+        <div class="algo-btns">
+          <button class="algo-btn linear" onclick="startSearch('linear')">Linear Search</button>
+          <button class="algo-btn binary" onclick="startSearch('binary')">Binary Search</button>
+          <button class="algo-btn jump"   onclick="startSearch('jump')">Jump Search</button>
+          <button class="algo-btn stop" id="stop-search-btn" onclick="stopSearch()" disabled>⏹ Stop</button>
+        </div>
+      </div>
+      <div class="info-bar">
+        <div class="info-algo" id="srch-algo-name">— Select an algorithm —</div>
+        <div class="info-chips">
+          <div class="chip best">Best <span id="srch-best">—</span></div>
+          <div class="chip worst">Worst <span id="srch-worst">—</span></div>
+          <div class="chip">Sorted? <span id="srch-sorted">—</span></div>
+        </div>
+      </div>
+      <div class="viz-area">
+        <div class="search-grid-container" id="search-grid"></div>
+        <div class="legend" style="margin-top:16px">
+          <div class="leg"><div class="dot" style="background:var(--accent)"></div>Unvisited</div>
+          <div class="leg"><div class="dot" style="background:var(--pink)"></div>Checking</div>
+          <div class="leg"><div class="dot" style="background:var(--purple)"></div>In Range</div>
+          <div class="leg"><div class="dot" style="background:var(--yellow)"></div>Found!</div>
+          <div class="leg"><div class="dot" style="background:#1e293b"></div>Eliminated</div>
+        </div>
+      </div>
+      <div class="status-bar" id="search-status">Generate an array and pick a search algorithm.</div>
+    </div>
+
+    <!-- ═══ LINKED LIST ═══ -->
+    <div class="topic-panel" id="panel-linked">
+      <div class="controls-card">
+        <div class="controls-row">
+          <div class="input-group">
+            <label>Value</label>
+            <input type="number" id="ll-val-input" value="42" min="1" max="999">
+          </div>
+          <div class="input-group">
+            <label>Position (0-based)</label>
+            <input type="number" id="ll-pos-input" value="0" min="0" max="99">
+          </div>
+          <button class="mini-btn" onclick="llPrepend()">⬅ Prepend</button>
+          <button class="mini-btn" onclick="llAppend()">Append ➡</button>
+          <button class="mini-btn" onclick="llInsertAt()">↕ Insert At</button>
+          <button class="mini-btn" onclick="llDeleteAt()">✕ Delete At</button>
+          <button class="mini-btn" onclick="llSearch()">🔍 Search</button>
+          <button class="mini-btn" onclick="llReverse()">⇄ Reverse</button>
+          <button class="mini-btn danger" onclick="llClear()">🗑 Clear</button>
+        </div>
+      </div>
+      <div class="info-bar">
+        <div class="info-algo">Linked List</div>
+        <div class="info-chips">
+          <div class="chip">Nodes <span id="ll-length">0</span></div>
+          <div class="chip best">Prepend O(1)</div>
+          <div class="chip">Append O(n)</div>
+          <div class="chip worst">Search O(n)</div>
+        </div>
+      </div>
+      <div class="viz-area ll-viz-area">
+        <div class="ll-track" id="ll-display"></div>
+      </div>
+      <div class="status-bar" id="ll-status">Add nodes to build your linked list.</div>
+    </div>
+
+    <!-- ═══ STACK & QUEUE ═══ -->
+    <div class="topic-panel" id="panel-sq">
+      <div class="controls-card">
+        <div class="controls-row">
+          <div class="input-group">
+            <label>Value</label>
+            <input type="number" id="sq-val-input" value="42" min="1" max="999">
+          </div>
+          <div class="sq-divider-label">STACK</div>
+          <button class="mini-btn stack-btn" onclick="stackPush()">⬆ Push</button>
+          <button class="mini-btn stack-btn" onclick="stackPop()">⬇ Pop</button>
+          <button class="mini-btn stack-btn" onclick="stackPeek()">👁 Peek</button>
+          <div class="sq-divider"></div>
+          <div class="sq-divider-label">QUEUE</div>
+          <button class="mini-btn queue-btn" onclick="queueEnqueue()">➡ Enqueue</button>
+          <button class="mini-btn queue-btn" onclick="queueDequeue()">⬅ Dequeue</button>
+          <button class="mini-btn queue-btn" onclick="queuePeek()">👁 Peek</button>
+          <button class="mini-btn danger" onclick="sqClear()">🗑 Clear</button>
+        </div>
+      </div>
+      <div class="info-bar">
+        <div class="info-algo">Stack & Queue</div>
+        <div class="info-chips">
+          <div class="chip stack-chip">Stack <span id="stack-size">0</span> items</div>
+          <div class="chip queue-chip">Queue <span id="queue-size">0</span> items</div>
+          <div class="chip best">Stack: LIFO</div>
+          <div class="chip best">Queue: FIFO</div>
+        </div>
+      </div>
+      <div class="sq-panels">
+        <!-- STACK -->
+        <div class="sq-panel stack-panel">
+          <div class="sq-panel-header">
+            <span class="sq-panel-title">STACK</span>
+            <span class="sq-panel-sub">Last In, First Out</span>
+          </div>
+          <div class="stack-visual">
+            <div class="stack-top-label">▼ TOP</div>
+            <div class="stack-body" id="stack-area"></div>
+            <div class="stack-bottom-label">■ BOTTOM</div>
+          </div>
+          <div class="sq-pointer-row">
+            <div class="pointer-badge top-pointer" id="top-pointer">TOP: empty</div>
+          </div>
+        </div>
+        <!-- QUEUE -->
+        <div class="sq-panel queue-panel">
+          <div class="sq-panel-header">
+            <span class="sq-panel-title">QUEUE</span>
+            <span class="sq-panel-sub">First In, First Out</span>
+          </div>
+          <div class="queue-visual">
+            <div class="queue-end-label dequeue-label">⬅ DEQUEUE</div>
+            <div class="queue-body" id="queue-area"></div>
+            <div class="queue-end-label enqueue-label">ENQUEUE ➡</div>
+          </div>
+          <div class="sq-pointer-row">
+            <div class="pointer-badge front-pointer" id="front-pointer">FRONT: empty</div>
+            <div class="pointer-badge rear-pointer"  id="rear-pointer">REAR: empty</div>
+          </div>
+        </div>
+      </div>
+      <div class="status-bar" id="sq-status">Push / Enqueue values to get started.</div>
+    </div>
+
+    <script src="utils/sleep.js"></script>
+    <script src="utils/swap.js"></script>
+    <script src="utils/barUtils.js"></script>
+    <script src="algorithms/bubble.js"></script>
+    <script src="algorithms/selection.js"></script>
+    <script src="algorithms/insertion.js"></script>
+    <script src="algorithms/merge.js"></script>
+    <script src="algorithms/quick.js"></script>
+    <script src="searching/linear.js"></script>
+    <script src="searching/binary.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
