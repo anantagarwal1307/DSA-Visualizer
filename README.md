@@ -8,7 +8,17 @@ Visualizes sorting algorithms, searching algorithms, linked list operations, and
 ▶ [View Live](https://anantagarwal1307.github.io/DSA-Visualizer)
 
 ## 📸 Screenshot
-<!-- Add your screenshot here after deployment -->
+### ⚡ Sorting
+![Sorting](screenshots/sorting.png)
+
+### 🔍 Searching
+![Searching](screenshots/searching.png)
+
+### 🔗 Linked List
+![Linked List](screenshots/linkedlist.png)
+
+### 📦 Stack & Queue
+![Stack & Queue](screenshots/stackqueue.png)
 
 ## 🛠️ Built With
 - HTML5
